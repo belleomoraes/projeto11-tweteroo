@@ -13,14 +13,14 @@ let tweet = [];
 app.post("/sign-up", (req, res) => {
   user = req.body;
   userServer.push(user);
-  res.status(200).send("OK");
+  res.status(201).send({ message: "OK" });
 });
 
 app.post("/tweets", (req, res) => {
   tweet = req.body;
   tweetServer.push(tweet);
   console.log(tweetServer);
-  res.status(200).send("OK");
+  res.status(201).send({ message: "OK" });
 });
 
 app.get("/tweets", (req, res) => {
@@ -31,12 +31,13 @@ app.get("/tweets", (req, res) => {
     let positionSlice = teste.length - 10;
     lastTweets = tweetServer.slice(positionSlice);
   }
-  console.log(user);
   let lastTweetsAvatar = lastTweets.map((tweet) => {
-    tweet.avatar = user.avatar;
+    tweet.avatar = userServer
+      .filter((user) => user.username === tweet.username)
+      .map((value) => value.avatar);
     return tweet;
   });
   res.send(lastTweetsAvatar);
 });
 
-app.listen(5000, () => console.log("Listenning on 5000"));
+app.listen(5000, () => console.log("Listening on 5000"));
