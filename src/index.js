@@ -26,7 +26,6 @@ app.post("/tweets", (req, res) => {
   }
 
   tweetServer.push({ tweet, username });
-  console.log(tweetServer);
   res.status(201).send({ message: "OK" });
 });
 
@@ -47,5 +46,16 @@ app.get("/tweets", (req, res) => {
   res.send(lastTweetsAvatar);
 });
 
+app.get("/tweets/:USERNAME", (req, res) => {
+  const USERNAME = req.params.USERNAME;
+  const userFind = userServer.find((user) => user.username === USERNAME);
+  const tweetsUser = tweetServer
+    .filter((tweet) => tweet.username === USERNAME)
+    .map((value) => {
+      value.avatar = userFind.avatar;
+      return value;
+    });
 
+  res.send(tweetsUser);
+});
 app.listen(5000, () => console.log("Listening on 5000"));
