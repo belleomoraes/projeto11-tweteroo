@@ -5,20 +5,27 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-let user = [];
 const userServer = [];
 const tweetServer = [];
-let tweet = [];
 
 app.post("/sign-up", (req, res) => {
-  user = req.body;
-  userServer.push(user);
+  const { avatar, username } = req.body;
+  if (!avatar || !username) {
+    res.status(400).send({ message: "Todos os campos são obrigatórios!" });
+    return;
+  }
+  userServer.push({ avatar, username });
   res.status(201).send({ message: "OK" });
 });
 
 app.post("/tweets", (req, res) => {
-  tweet = req.body;
-  tweetServer.push(tweet);
+  const { tweet, username } = req.body;
+  if (!tweet || !username) {
+    res.status(400).send({ message: "Todos os campos são obrigatórios!" });
+    return;
+  }
+
+  tweetServer.push({ tweet, username });
   console.log(tweetServer);
   res.status(201).send({ message: "OK" });
 });
@@ -28,7 +35,7 @@ app.get("/tweets", (req, res) => {
   if (tweetServer.length <= 10) {
     lastTweets = tweetServer;
   } else {
-    let positionSlice = teste.length - 10;
+    let positionSlice = lastTweets.length - 10;
     lastTweets = tweetServer.slice(positionSlice);
   }
   let lastTweetsAvatar = lastTweets.map((tweet) => {
@@ -39,5 +46,6 @@ app.get("/tweets", (req, res) => {
   });
   res.send(lastTweetsAvatar);
 });
+
 
 app.listen(5000, () => console.log("Listening on 5000"));
